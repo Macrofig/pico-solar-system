@@ -5,6 +5,7 @@ import math
 import gc
 import machine
 from micropython import const
+import tz_offset
 
 gc.enable()
 backlight = 0.7
@@ -131,14 +132,15 @@ def main():
     draw_planets(HEIGHT, ti)
     start_int = time.ticks_ms()
     while True:
+        plusOffset = plusDays + (tz_offset.time_zone_offset * 60 * 60)
         ticks_dif = time.ticks_diff(time.ticks_ms(), start_int)
         if ticks_dif >= 1000 or time.time() != seconds_absolute:
             seconds_absolute = time.time()
-            ti = time.localtime(seconds_absolute + plusDays)
+            ti = time.localtime(seconds_absolute + plusOffset)
             start_int = time.ticks_ms()
             ticks_dif = 0
         if change > 0:
-            ti = time.localtime(seconds_absolute + plusDays)
+            ti = time.localtime(seconds_absolute + plusOffset)
         if da != ti[2]:
             da = ti[2]
             change = 3
